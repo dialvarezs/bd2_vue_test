@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router'
 
 const nombre = ref("")
 const apellido = ref("")
@@ -10,6 +11,8 @@ let tareas = reactive([
   "Apender Vue",
 ])
 const nuevaTarea = ref("")
+
+const router = useRouter()
 
 
 const mensaje = computed(() => {
@@ -28,9 +31,13 @@ const agregarTarea = () => {
   }
   nuevaTarea.value = ""
 }
+const goToBlog = () => {
+  router.push({name: 'Advanced'})
+}
 </script>
 
 <template>
+  <button @click="goToBlog">Ir a Blog</button>
   <div>
     <ul>
       <li v-for="tarea in tareas" :key="tarea">{{ tarea }}</li>
