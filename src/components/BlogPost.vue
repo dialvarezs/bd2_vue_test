@@ -1,5 +1,7 @@
 <script setup lang="ts">
-defineProps<{
+import { useRouter } from 'vue-router';
+
+const props = defineProps<{
     postId: number,
     title: string,
     subtitle: string,
@@ -9,6 +11,11 @@ defineProps<{
 const emit = defineEmits<{
     (e: 'edit', postId: number): void
 }>()
+const router = useRouter()
+
+const goToPost = () => {
+    router.push({name: 'ViewBlogEntry', params: {id: props.postId}})
+}
 </script>
 
 <template>
@@ -22,6 +29,7 @@ const emit = defineEmits<{
             </template>
         </span>
         <div>
+            <button @click="goToPost">Ver Post</button>
             <button @click="emit('edit', postId)">Editar</button>
         </div>
     </div>

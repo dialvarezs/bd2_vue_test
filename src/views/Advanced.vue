@@ -3,22 +3,17 @@ import { Post } from "../interfaces"
 import BlogPost from "../components/BlogPost.vue"
 import PostForm from "../components/PostForm.vue"
 import Card from "../components/Card.vue"
-import { Ref, computed, onBeforeMount, onMounted, reactive, ref, watch } from "vue";
+import useMainStore from "../stores/main"
+import { Ref, onBeforeMount, onMounted, ref, watch } from "vue";
+import { storeToRefs } from "pinia"
 
-const posts: Post[] = reactive([
-  { title: 'Explorando el Espacio: La Nueva Frontera', subtitle: 'Un vistazo a las misiones espaciales actuales', date: '22/11/2023', isPublised: true },
-  { title: 'Innovaciones en Energía Renovable', subtitle: 'Cómo el sol y el viento están moldeando el futuro', date: '21/11/2023', isPublised: false },
-  { title: 'La Revolución de la Inteligencia Artificial', subtitle: 'Impacto y ética en la tecnología moderna', date: '23/11/2023', isPublised: true },
-  { title: 'Maravillas del Mundo Antiguo', subtitle: 'Un viaje a través de monumentos históricos', date: '23/10/2023', isPublised: false },
-  { title: 'Gastronomía Global: Sabores del Mundo', subtitle: 'Descubriendo platos exóticos y tradiciones culinarias', date: '23/03/2023', author: "Diego Alvarez", isPublised: true }
-]);
+const mainStore = useMainStore()
+const { publishedPosts } = storeToRefs(mainStore)
+
 const editPost = ref(false)
 const selectedPostId: Ref<number | null> = ref(null)
 const selectedPost: Ref<Post | null> = ref(null)
 
-const publishedPosts = computed(() => {
-  return posts.filter(x => x.isPublised)
-})
 
 watch(selectedPostId, (newValue, oldValue) => {
   alert(`selected post cambio de valor desde ${oldValue} por ${newValue}`)
@@ -27,16 +22,16 @@ watch(selectedPostId, (newValue, oldValue) => {
 
 const savePost = (post: Post) => {
   if (selectedPost.value !== null && selectedPostId.value !== null) {
-    posts[selectedPostId.value] = post
+    mainStore.setPost(selectedPostId.value, post)
     selectedPost.value = selectedPostId.value = null
   } else {
-    posts.push(post)
+    mainStore.addPost(post)
   }
   editPost.value = false
 }
 const triggerEditPost = (postId: number) => {
   selectedPostId.value = postId
-  selectedPost.value = posts[postId]
+  selectedPost.value = mainStore.getPost(postId)
   editPost.value = true
 }
 const cancelEditPost = () => {
